@@ -46,5 +46,10 @@
 	<artifactId>bcprov-jdk15</artifactId>
 	<version>140</version>
     </dependency>
+    <dependency>
+	<groupId>com.github.stephenc.high-scale-lib</groupId>
+	<artifactId>high-scale-lib</artifactId>
+	<version>1.1.4</version>
+    </dependency>
   </dependencies>
 </project>
