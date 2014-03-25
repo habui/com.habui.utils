@@ -8,6 +8,7 @@ package com.habui.utils;
 
 import com.habui.log.LogUtils;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -60,7 +61,7 @@ public class HttpUtils {
             conn.disconnect();
             
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             log.error(LogUtils.stackTrace(ex));
         }
         return json;
