@@ -14,8 +14,31 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -55,13 +78,76 @@ public class HttpUtils {
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader bufferReader = new BufferedReader(new InputStreamReader((conn.getInputStream())));
                 json = bufferReader.readLine(); 
+                bufferReader.close();
             } else {
                 log.error(String.format("Call Restful (%s) : %s", requestUrl, conn.getResponseCode()));
             }
+            
             conn.disconnect();
             
         }
         catch (IOException ex) {
+            log.error(LogUtils.stackTrace(ex));
+        }
+        return json;
+    }
+    
+    public static String makeRequestOverSSL(String requestUrl, Map<String, String> params, int kind) {
+        String json = "";
+        try {
+            TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
+                @Override
+                public boolean isTrusted(X509Certificate[] certificate, String authType) {
+                    return true;
+                }
+            };
+            SSLSocketFactory sf = new SSLSocketFactory(acceptingTrustStrategy, 
+            SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            SchemeRegistry registry = new SchemeRegistry();
+            registry.register(new Scheme("https", 8443, sf));
+            ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
+ 
+            DefaultHttpClient httpClient = new DefaultHttpClient(ccm);
+            
+            String urlOverHttps = requestUrl;
+            HttpUriRequest requestMethod = null;
+            if (kind == HttpUtils.GET) {
+                String query = createQuery(params);
+                urlOverHttps += "?" + query;
+                requestMethod = new HttpGet(urlOverHttps);
+            } else { // POST
+                HttpPost postRequest = new HttpPost(urlOverHttps);
+                
+                List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+                Iterator<String> it = params.keySet().iterator();
+                while (it.hasNext()) {
+                    String key = it.next();
+                    urlParameters.add(new BasicNameValuePair(key, params.get(key)));
+                }
+                postRequest.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+                requestMethod = postRequest;
+            }
+            
+            HttpResponse response = httpClient.execute(requestMethod);
+            if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK) {
+                json = EntityUtils.toString(response.getEntity());
+            } else {
+                log.error(String.format("Call Restful (%s) : %s", requestUrl, response.getStatusLine().getStatusCode()));
+            }
+            httpClient.close();
+        }
+        catch (IOException ex) {
+            log.error(LogUtils.stackTrace(ex));
+        } catch (KeyManagementException ex) {
+            log.error(LogUtils.stackTrace(ex));
+        } catch (KeyStoreException ex) {
+            log.error(LogUtils.stackTrace(ex));
+        } catch (NoSuchAlgorithmException ex) {
+            log.error(LogUtils.stackTrace(ex));
+        } catch (UnrecoverableKeyException ex) {
+            log.error(LogUtils.stackTrace(ex));
+        } catch (ParseException ex) {
             log.error(LogUtils.stackTrace(ex));
         }
         return json;
