@@ -98,6 +98,7 @@ public class HttpUtils {
             TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
                 @Override
                 public boolean isTrusted(X509Certificate[] certificate, String authType) {
+                    // in secure
                     return true;
                 }
             };
