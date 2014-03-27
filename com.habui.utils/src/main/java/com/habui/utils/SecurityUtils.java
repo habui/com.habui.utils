@@ -17,16 +17,16 @@ import org.apache.log4j.Logger;
 public class SecurityUtils {
     private static final Logger log = LogUtils.getLogger(SecurityUtils.class);
     
-    public  static Pattern scriptPattern_1 = Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE);
-    public  static Pattern scriptPattern_2 = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-    public  static Pattern scriptPattern_3 = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-    public  static Pattern scriptPattern_4 = Pattern.compile("</script>", Pattern.CASE_INSENSITIVE);
-    public  static Pattern scriptPattern_5 = Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-    public  static Pattern scriptPattern_6 = Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);        
-    public  static Pattern scriptPattern_7 = Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-    public  static Pattern scriptPattern_8 = Pattern.compile("javascript:", Pattern.CASE_INSENSITIVE);
-    public  static Pattern scriptPattern_9 = Pattern.compile("vbscript:", Pattern.CASE_INSENSITIVE);
-    public  static Pattern scriptPattern_10 = Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private  static final Pattern scriptPattern_1 = Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE);
+    private  static final Pattern scriptPattern_2 = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private  static final Pattern scriptPattern_3 = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private  static final Pattern scriptPattern_4 = Pattern.compile("</script>", Pattern.CASE_INSENSITIVE);
+    private  static final Pattern scriptPattern_5 = Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private  static final Pattern scriptPattern_6 = Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);        
+    private  static final Pattern scriptPattern_7 = Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private  static final Pattern scriptPattern_8 = Pattern.compile("javascript:", Pattern.CASE_INSENSITIVE);
+    private  static final Pattern scriptPattern_9 = Pattern.compile("vbscript:", Pattern.CASE_INSENSITIVE);
+    private  static final Pattern scriptPattern_10 = Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     
     
     public static String stripXSS(String value) {
