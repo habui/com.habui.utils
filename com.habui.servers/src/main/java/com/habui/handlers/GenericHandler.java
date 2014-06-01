@@ -4,6 +4,8 @@
  */
 package com.habui.handlers;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -34,12 +36,38 @@ public class GenericHandler extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             // Assuming your json object is **jsonObject**, perform the following, it will return your json object  
-            out.print(String.format("{\"result\":\"xin chao\"}"));
+            //out.print(String.format("{\"result\":\"xin chao\"}"));
+            String content = readFile("/home/habns/Working/jsonsample.txt");
+            out.print(content);
             out.flush();
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    
+    private static String readFile(String filename) {
+        BufferedReader br = null;
+        String content = "";
+        try {
+
+            String sCurrentLine;
+            br = new BufferedReader(new FileReader(filename));
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                content += sCurrentLine;
+            }
+
+        } catch (IOException e) {
+                e.printStackTrace();
+        } finally {
+            try {
+                    if (br != null)br.close();
+            } catch (IOException ex) {
+                    ex.printStackTrace();
+            }
+        }
+        return content;
     }
     
 }

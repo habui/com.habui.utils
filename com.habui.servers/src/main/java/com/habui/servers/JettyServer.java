@@ -5,6 +5,7 @@
 package com.habui.servers;
 
 import com.habui.filter.CorsFilter;
+import com.habui.filter.GZipFilter;
 import org.eclipse.jetty.server.Server;
 
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -35,10 +36,13 @@ public class JettyServer {
             handler.addServletWithMapping(com.habui.handlers.GenericHandler.class, "/test");
             
             FilterHolder filterHolder = new FilterHolder(new CorsFilter());
+            FilterHolder gzipFilterHolder = new FilterHolder(new GZipFilter());
+            
             //FilterHolder filterHolder = new FilterHolder(CrossOriginFilter.class);
             //filterHolder.setInitParameter("allowedOrigins", "*");
             //filterHolder.setInitParameter("allowedMethods", "GET, POST");
             handler.addFilterWithMapping(filterHolder, "/*", FilterMapping.REQUEST);
+            handler.addFilterWithMapping(gzipFilterHolder, "/*", FilterMapping.REQUEST);
 
             server.start();
             server.join();
