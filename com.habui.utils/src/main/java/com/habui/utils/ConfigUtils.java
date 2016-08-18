@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @author habui
+ * @author habui1
  */
 public class ConfigUtils {
     private static final Map<String, String> localconfig = new HashMap();
